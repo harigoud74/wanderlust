@@ -1,0 +1,26 @@
+const express = require("express");
+const app = express();
+const session = require("express-session");
+
+const sessionOptions = {
+  secret: "secretCode",
+  resave: false,
+  saveUninitialized: true,
+};
+
+app.use(session(sessionOptions));
+
+app.get("/", (req, res) => {
+  res.send("hello");
+});
+app.get("/login", (req, res) => {
+  let {name = "harii"} = req.query;
+  req.session.name = name;
+  res.send(`Hii ${name}`);
+});
+app.get("/hello", (req, res) => {
+  res.send(`Hello welcome ${req.session.name}`);
+});
+app.listen(5000, () => {
+  console.log("server is the started! ");
+});
