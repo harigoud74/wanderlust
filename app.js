@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const port = 8080;
-const ejs = require("ejs");
+// const ejs = require("ejs");
 const mongoose = require("mongoose");
 const path = require("path");
 const methodOverride = require("method-override");
@@ -51,18 +51,18 @@ app.get("/", (req, res) => {
 app.use(session(sessionOptions));
 app.use(flash());
 
-app.use((req, res, next) => {
-  res.locals.success = req.flash("success");
-  res.locals.error = req.flash("error");
-  next();
-});
-
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  res.locals.currUser = req.user;
+  next();
+});
 // app.get("/demo", async (req, res) => {
 //   let fakeUser = new User({
 //     email: "Student@gmail.com",
