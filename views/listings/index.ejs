@@ -1,32 +1,199 @@
 <% layout("/layouts/boilerplate") -%>
 
+<style>
+    #filters {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1rem;
+    }
 
-    <body>
-        <h2>All Listings</h2>
-        <!-- <form action="/listings/new" method="GET">
-            <button>Create New Listing</button>
-        </form> -->
-        <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
-            <% for(let listing of allListings){ %>
-                <a href="/listings/<%=listing._id %>" class="listing-link">
-                    <div class="card listing-card">
-                        <img src="<%=listing.image.url%>" class="card-img-top" style="height: 20rem;">
-                        <div class="card-img-overlay">
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text">
-                                <b>
-                                    <%= listing.title %>
-                                </b>
-                            <p class="card-text">
-                                <%= listing.description %>
-                                    <p class="card-text">
-                                        &#8377; <%= Number(listing.price).toLocaleString("en-IN")%>
-                                    </p>
-                        </div>
-                    </div>
-                </a>
-                <% } %>
+    .filter {
+        text-align: center;
+        opacity: 0.6;
+        min-width: 65px;
+    }
 
-        </div>
-    </body>
+    .filter:hover {
+        opacity: 1;
+        cursor: pointer;
+    }
+
+    .filter p {
+        font-size: 0.8rem;
+        margin-bottom: 0;
+    }
+
+    .tax-info {
+        display: none;
+    }
+
+    .tax-toggle {
+        border: 1px solid black;
+        border-radius: 1rem;
+        height: 3rem;
+        padding: 0 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        white-space: nowrap;
+        margin-left: auto;
+    }
+    .tax-toggle input{
+        visibility: hidden;
+    }
+
+    .listing-card {
+        border: none;
+        margin-bottom: 2rem;
+    }
+
+    .listing-card img {
+        width: 100%;
+        height: 20rem;
+        object-fit: cover;
+        border-radius: 1rem;
+    }
+
+    .listing-link {
+        text-decoration: none;
+        color: black;
+    }
+
+    .listing-card:hover {
+        opacity: 0.9;
+    }
+
+    @media(max-width: 768px) {
+        #filters {
+            gap: 1rem;
+        }
+
+        .tax-toggle {
+            margin-left: 0;
+        }
+    }
+</style>
+
+<!-- FILTERS SECTION -->
+<div id="filters">
+
+    <div class="filter">
+        <i class="fa-solid fa-fire"></i>
+        <p>Trending</p>
+    </div>
+
+    <div class="filter">
+        <i class="fa-solid fa-bed"></i>
+        <p>Rooms</p>
+    </div>
+
+    <div class="filter">
+        <i class="fa-solid fa-mountain-city"></i>
+        <p>Iconic cities</p>
+    </div>
+
+    <div class="filter">
+        <i class="fa-brands fa-fort-awesome"></i>
+        <p>Castles</p>
+    </div>
+
+    <div class="filter">
+        <i class="fa-solid fa-mountain"></i>
+        <p>Mountains</p>
+    </div>
+
+    <div class="filter">
+        <i class="fa-solid fa-person-swimming"></i>
+        <p>Amazing Pools</p>
+    </div>
+
+    <div class="filter">
+        <i class="fa-solid fa-tents"></i>
+        <p>Camping</p>
+    </div>
+
+    <div class="filter">
+        <i class="fa-solid fa-tractor"></i>
+        <p>Farms</p>
+    </div>
+
+    <div class="filter">
+        <i class="fa-solid fa-person-snowboarding"></i>
+        <p>Arctic</p>
+    </div>
+
+    <div class="filter">
+        <i class="fa-solid fa-ship"></i>
+        <p>Boats</p>
+    </div>
+
+    <!-- TAX TOGGLE -->
+    <div class="tax-toggle">
+        <input type="checkbox" id="switchCustomWidth">
+        <label for="switchCustomWidth"><i class="fa-solid fa-percent">&nbsp;</i>Display Taxes</label>
+    </div>
+
+</div>
+
+<!-- LISTINGS SECTION (OUTSIDE FILTERS) -->
+
+<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-4">
+
+    <% for(let listing of allListings) { %>
+
+        <a href="/listings/<%= listing._id %>" class="listing-link">
+
+            <div class="card listing-card">
+
+                <img
+                    src="<%= listing.image.url %>"
+                    class="card-img-top"
+                    alt="<%= listing.title %>"
+                >
+
+                <div class="card-body">
+
+                    <p class="card-text">
+                        <b><%= listing.title %></b>
+                    </p>
+
+                    <p class="card-text">
+                        <%= listing.description %>
+                    </p>
+
+                    <p class="card-text">
+                        &#8377; <%= Number(listing.price).toLocaleString("en-IN") %>
+                        / Night
+
+                        <i class="tax-info">
+                            &nbsp; +18% GST
+                        </i>
+                    </p>
+
+                </div>
+
+            </div>
+
+        </a>
+
+    <% } %>
+
+</div>
+
+<!-- TAX DISPLAY SCRIPT -->
+
+<script>
+    const taxSwitch = document.getElementById("switchCustomWidth");
+
+    taxSwitch.addEventListener("change", () => {
+
+        const taxInfo = document.querySelectorAll(".tax-info");
+
+        taxInfo.forEach((info) => {
+            info.style.display = taxSwitch.checked ? "inline" : "none";
+        });
+
+    });
+</script>

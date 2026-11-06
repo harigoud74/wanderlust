@@ -1,3 +1,9 @@
+const dns = require("node:dns");
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
+if (process.env.NODE_ENV != "production") {
+  require("dotenv").config();
+}
+
 const express = require("express");
 const app = express();
 const port = 8080;
@@ -11,9 +17,12 @@ const cookieParser = require("cookie-parser");
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
+
 const User = require("./models/user.js");
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
+// const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
+
+const dbUrl = process.env.ATLASDB_URL;
 
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
@@ -29,7 +38,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 main().catch((err) => console.log(err));
 async function main() {
-  await mongoose.connect(MONGO_URL);
+  await mongoose.connect(dbUrl);
   console.log("DATABASE IS CONNECTED !");
 }
 
@@ -44,9 +53,9 @@ const sessionOptions = {
   },
 };
 
-app.get("/", (req, res) => {
-  res.send("Successful testing");
-});
+// app.get("/", (req, res) => {
+//   res.send("Successful testing");
+// });
 
 app.use(session(sessionOptions));
 app.use(flash());
@@ -63,14 +72,7 @@ app.use((req, res, next) => {
   res.locals.currUser = req.user;
   next();
 });
-// app.get("/demo", async (req, res) => {
-//   let fakeUser = new User({
-//     email: "Student@gmail.com",
-//     username: "Student",
-//   });
-//   let registeredUser = await User.register(fakeUser, "helloworld");
-//   res.send(registeredUser);
-// });
+
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/", userRouter);

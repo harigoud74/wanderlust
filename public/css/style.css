@@ -114,3 +114,8 @@ body {
 img:hover{
     transform: scaleY(1.2);
 } */
+
+#map {
+  height: 350px;
+  width: 90vh;
+}
