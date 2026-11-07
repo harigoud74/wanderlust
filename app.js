@@ -13,6 +13,7 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const session = require("express-session");
+const {MongoStore} = require("connect-mongo");
 const cookieParser = require("cookie-parser");
 const flash = require("connect-flash");
 const passport = require("passport");
@@ -42,8 +43,20 @@ async function main() {
   console.log("DATABASE IS CONNECTED !");
 }
 
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  crypto: {
+    secret: process.env.SECRET,
+  },
+  touchAfter: 24 * 3600,
+});
+
+store.on("error", (err) => {
+  console.log("Error in mongo session store", err);
+});
+
 const sessionOptions = {
-  secret: "secretCode",
+  secret: process.env.SECRET,
   resave: false,
   saveUninitialized: true,
   cookie: {
